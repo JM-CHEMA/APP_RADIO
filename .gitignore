@@ -1,0 +1,62 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+.pub-cache/
+build/
+coverage/
+**/doc/api/
+*.freezed.dart
+
+# IDE / editor
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs / temporary files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Android generated / local configuration
+android/.gradle/
+android/captures/
+android/local.properties
+android/key.properties
+*.jks
+*.keystore
+
+# Apple platform generated files and signing secrets
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/ephemeral/
+ios/Pods/
+macos/Flutter/ephemeral/
+macos/Pods/
+*.mobileprovision
+*.p12
+*.cer
+
+# Desktop platform generated files
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# Local environment variables and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.p8
+*service-account*.json
+*service_account*.json
+
+# Test and debugging artifacts
+*.hprof
+*.prof
+*.trace
