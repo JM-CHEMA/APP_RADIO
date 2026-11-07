@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-// Identidad visual compartida. Los widgets no deben repetir estos colores.
 abstract final class AppColors {
-  static const background = Color(0xFF10343A);
+  static const backgroundPrimary = Color.fromARGB(255, 254, 254, 254);
+  static const background = Color.fromARGB(255, 240, 243, 244);
   static const surface = Color(0xFF235660);
   static const surfaceRaised = Color(0xFF326E79);
   static const primary = Color(0xFF78F4E8);
-  static const accent = Color(0xFF68F154);
-  static const textPrimary = Color(0xFFF3FFFA);
+  static const accent = Color(0xFF087BFA);
+  static const textPrimary = Color.fromARGB(255, 0, 0, 0);
   static const textSecondary = Color(0xFFBCDCD7);
   static const onPrimary = Color(0xFF10343A);
   static const error = Color(0xFFFF8E8E);
@@ -25,17 +25,18 @@ abstract final class AppTheme {
     useMaterial3: true,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: AppColors.background,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-      brightness: Brightness.dark,
-    ).copyWith(
-      primary: AppColors.primary,
-      onPrimary: AppColors.onPrimary,
-      secondary: AppColors.accent,
-      surface: AppColors.surface,
-      onSurface: AppColors.textPrimary,
-      error: AppColors.error,
-    ),
+    colorScheme:
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.dark,
+        ).copyWith(
+          primary: AppColors.primary,
+          onPrimary: AppColors.onPrimary,
+          secondary: AppColors.accent,
+          surface: AppColors.surface,
+          onSurface: AppColors.textPrimary,
+          error: AppColors.error,
+        ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.background,
       foregroundColor: AppColors.textPrimary,
@@ -50,15 +51,30 @@ abstract final class AppTheme {
       ),
     ),
     textTheme: const TextTheme(
-      headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-      titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-      titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+      headlineMedium: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+      ),
       bodyLarge: TextStyle(fontSize: 16, color: AppColors.textPrimary),
       bodyMedium: TextStyle(fontSize: 14, color: AppColors.textSecondary),
       bodySmall: TextStyle(fontSize: 12, color: AppColors.textSecondary),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        elevation: 8,
+        shadowColor: AppColors.accent.withValues(alpha: 0.4),
         backgroundColor: AppColors.accent,
         foregroundColor: AppColors.onPrimary,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
