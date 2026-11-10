@@ -9,152 +9,130 @@ class ProgramCarousel extends StatelessWidget {
 
   const ProgramCarousel({super.key, required this.programs});
 
-  // Ventana detalles del programa.
   void _showDetails(BuildContext context, ProgramModel program) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
+      isDismissible: true,
+      enableDrag: true,
       showDragHandle: true,
-
       backgroundColor: AppColors.backgroundPrimary,
-
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-
-      builder: (context) => SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.large),
-
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 220,
-
-                  child:
-                      program.imageUrl != null && program.imageUrl!.isNotEmpty
-                      ? Image.network(
-                          program.imageUrl!,
-                          fit: BoxFit.cover,
-
-                          errorBuilder: (context, error, stackTrace) {
-                            return const ColoredBox(
-                              color: AppColors.background,
-                              child: Icon(
-                                Icons.headphones,
-                                size: 70,
-                                color: AppColors.accent,
-                              ),
-                            );
-                          },
-                        )
-                      : const ColoredBox(
-                          color: AppColors.background,
-                          child: Icon(
-                            Icons.headphones,
-                            size: 70,
-                            color: AppColors.accent,
-                          ),
-                        ),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              Text(
-                program.title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              Text(
-                program.description,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16,
-                  height: 1.5,
-                  color: const Color(0xFF64748B),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.access_time_rounded,
-                      color: AppColors.accent,
-                      size: 22,
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: Text(
-                        program.schedule,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF475569),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 28),
-
-              // BOTON CERRAR
-              Align(
-                alignment: Alignment.centerRight,
-
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                      vertical: 14,
-                    ),
-
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-
-                  child: const Text(
-                    'Cerrar',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
-            ],
-          ),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.bottomSheet),
         ),
       ),
+      builder: (context) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'DETALLES DEL PROGRAMA',
+                    style: AppTextStyles.stationAcronym,
+                  ),
+
+                  const SizedBox(height: AppSpacing.large),
+
+                  Center(
+                    child: Container(
+                      width: 210,
+                      height: 210,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(AppRadius.card),
+                        boxShadow: AppShadows.program,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadius.card),
+                        child:
+                            program.imageUrl != null &&
+                                program.imageUrl!.isNotEmpty
+                            ? Image.network(
+                                program.imageUrl!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const ColoredBox(
+                                    color: AppColors.background,
+                                    child: Icon(
+                                      Icons.headphones_rounded,
+                                      size: 64,
+                                      color: AppColors.accent,
+                                    ),
+                                  );
+                                },
+                              )
+                            : const ColoredBox(
+                                color: AppColors.background,
+                                child: Icon(
+                                  Icons.headphones_rounded,
+                                  size: 64,
+                                  color: AppColors.accent,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: AppSpacing.large),
+
+                  Text(
+                    program.title,
+                    style: AppTextStyles.sectionTitle.copyWith(fontSize: 25),
+                  ),
+
+                  const SizedBox(height: AppSpacing.medium),
+
+                  Text(
+                    program.description,
+                    style: AppTextStyles.sectionSubtitle.copyWith(
+                      fontSize: 15,
+                      height: 1.6,
+                    ),
+                  ),
+
+                  const SizedBox(height: AppSpacing.large),
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppSpacing.normal),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(AppRadius.normal),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule_rounded,
+                          color: AppColors.accent,
+                          size: 22,
+                        ),
+
+                        const SizedBox(width: AppSpacing.medium),
+
+                        Expanded(
+                          child: Text(
+                            program.schedule,
+                            style: AppTextStyles.sectionSubtitle.copyWith(
+                              fontSize: 14,
+                              color: AppColors.subtitle,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -167,32 +145,52 @@ class ProgramCarousel extends StatelessWidget {
       );
     }
 
-    // CARRUSEl
     return LayoutBuilder(
       builder: (context, constraints) {
+        final viewportFraction = constraints.maxWidth < 360 ? 0.46 : 0.42;
+
+        final itemWidth = constraints.maxWidth * viewportFraction;
+
+        final carouselHeight = (itemWidth - AppSpacing.medium + 62).clamp(
+          180.0,
+          290.0,
+        );
+
+        if (programs.length == 1) {
+          return SizedBox(
+            height: carouselHeight,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: itemWidth,
+                height: carouselHeight,
+                child: ProgramCard(
+                  program: programs.first,
+                  onTap: () => _showDetails(context, programs.first),
+                ),
+              ),
+            ),
+          );
+        }
+
         return CarouselSlider.builder(
-          key: ValueKey(programs.map((p) => p.id).join('|')),
-
+          key: ValueKey(programs.map((program) => program.id).join('|')),
           itemCount: programs.length,
-
           options: CarouselOptions(
-            height: 180,
-
-            viewportFraction: programs.length == 1
-                ? 1.0
-                : constraints.maxWidth < 370
-                ? 0.85
-                : 0.70,
-
+            height: carouselHeight,
+            viewportFraction: viewportFraction,
             enableInfiniteScroll: false,
             autoPlay: false,
             padEnds: false,
+            enlargeCenterPage: false,
+            scrollDirection: Axis.horizontal,
           ),
-
           itemBuilder: (context, index, realIndex) {
+            final program = programs[index];
+
             return ProgramCard(
-              program: programs[index],
-              onTap: () => _showDetails(context, programs[index]),
+              program: program,
+              onTap: () => _showDetails(context, program),
             );
           },
         );

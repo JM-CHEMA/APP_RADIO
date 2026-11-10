@@ -3,7 +3,6 @@ import 'package:radio_app/app_theme.dart';
 import 'package:radio_app/models/station_model.dart';
 import 'package:radio_app/widgets/station_artwork.dart';
 
-//informacion de estacion.
 class StationCard extends StatelessWidget {
   final StationModel station;
   final bool isActive;
@@ -18,101 +17,88 @@ class StationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.backgroundPrimary,
-      surfaceTintColor: Colors.transparent,
-      margin: const EdgeInsets.only(bottom: AppSpacing.medium),
-      elevation: 2,
-      shadowColor: Colors.black.withValues(alpha: 0.10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: isActive ? AppColors.accent : const Color(0xFFE8EDF2),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundPrimary,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        border: Border.all(
+          color: isActive ? AppColors.accent : AppColors.border,
           width: isActive ? 1.5 : 1,
         ),
+        boxShadow: AppShadows.card,
       ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.medium),
+            child: Row(
+              children: [
+                StationArtwork(station: station, size: 76, radius: 15),
 
-      clipBehavior: Clip.antiAlias,
+                const SizedBox(width: 14),
 
-      child: InkWell(
-        onTap: onTap,
-
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: StationArtwork(station: station, size: 72, radius: 14),
-              ),
-
-              const SizedBox(width: 14),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children: [
-                    Text(
-                      station.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        station.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.stationTitle,
                       ),
-                    ),
 
-                    const SizedBox(height: 4),
+                      const SizedBox(height: 5),
 
-                    Text(
-                      station.acronym,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF64748B),
+                      Text(
+                        station.acronym.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.stationAcronym.copyWith(
+                          color: isActive ? AppColors.accent : AppColors.muted,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 4),
+                      const SizedBox(height: 6),
 
-                    Text(
-                      station.slogan,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        height: 1.35,
-                        color: Color(0xFF64748B),
+                      Text(
+                        station.slogan,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.stationDescription,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 10),
-
-              Container(
-                width: 36,
-                height: 36,
-
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.08),
-                  shape: BoxShape.circle,
+                    ],
+                  ),
                 ),
 
-                child: Icon(
-                  isActive ? Icons.graphic_eq : Icons.play_circle_outline,
-                  color: AppColors.accent,
-                  size: 22,
-                  semanticLabel: isActive
-                      ? 'Estación activa'
-                      : 'Seleccionar estación',
+                const SizedBox(width: 10),
+
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: isActive ? AppColors.accent : AppColors.background,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isActive
+                        ? Icons.graphic_eq_rounded
+                        : Icons.play_arrow_rounded,
+                    color: isActive ? Colors.white : AppColors.accent,
+                    size: 23,
+                    semanticLabel: isActive
+                        ? 'Estación activa'
+                        : 'Seleccionar estación',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

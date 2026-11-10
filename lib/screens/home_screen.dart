@@ -13,35 +13,34 @@ import 'package:radio_app/widgets/station_card.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // Abre el reproductor mediante un Bottom Sheet.
   void _openPlayer(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-
-      // Permite controlar la altura.
       isScrollControlled: true,
-      // elimina la barra superior del Bottom Sheet
       showDragHandle: false,
-      // Permite cerrarlo deslizando hacia abajo.
       enableDrag: true,
-      // Fondo transparente fuera del reproductor.
       backgroundColor: Colors.transparent,
-      // No agrega espacio superior adicional.
-      useSafeArea: false,
-      // Recorta el contenido en los bordes.
+      useSafeArea: true,
       clipBehavior: Clip.antiAlias,
-
       builder: (context) {
         return const FractionallySizedBox(
-          // tamano que ocupa el reproductor de la pantalla
-          heightFactor: 0.82,
-
-          child: ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            child: PlayerScreen(),
-          ),
+          heightFactor: 1.0,
+          child: PlayerScreen(),
         );
       },
+    );
+  }
+
+  Widget _sectionHeader({required String title, required String subtitle}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: AppTextStyles.sectionTitle),
+
+        const SizedBox(height: 7),
+
+        Text(subtitle, style: AppTextStyles.sectionSubtitle),
+      ],
     );
   }
 
@@ -49,34 +48,27 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
+
       appBar: AppBar(
         backgroundColor: AppColors.backgroundPrimary,
         surfaceTintColor: AppColors.backgroundPrimary,
         elevation: 0,
-        toolbarHeight: 72,
+        toolbarHeight: 76,
         titleSpacing: 20,
 
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(5),
-              child: Image.asset(
-                'assets/icons/iconRadio.png',
-                width: 55,
-                height: 55,
-              ),
+            Image.asset(
+              'assets/icons/iconRadio.png',
+              width: 48,
+              height: 48,
+              fit: BoxFit.contain,
             ),
 
-            const SizedBox(width: 2),
+            const SizedBox(width: 10),
 
-            Text(
-              'Radio App',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontSize: 23,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-            ),
+            Text('Radio App', style: AppTextStyles.appTitle),
           ],
         ),
       ),
@@ -84,129 +76,94 @@ class HomeScreen extends StatelessWidget {
       body: Consumer<AudioProvider>(
         builder: (context, audio, _) {
           final station = audio.station;
-          final programs = DemoData.programsFor(station?.id);
+
+          final programs = DemoData.stations
+              .expand((item) => DemoData.programsFor(item.id))
+              .toList();
 
           return CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+
             slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 22, 20, 8),
+              SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 560),
 
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
 
-                    children: [
-                      // PROGRAMAS DESTACADOS
-                      Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 4,
-                            height: 26,
-                            decoration: BoxDecoration(
-                              color: AppColors.accent,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                          _sectionHeader(
+                            title: 'Programas destacados',
+                            subtitle: station == null
+                                ? 'Explora los programas demo'
+                                : 'De ${station.name}',
                           ),
 
-                          const SizedBox(width: 12),
+                          const SizedBox(height: 22),
 
-                          Expanded(
-                            child: Text(
-                              'Programas destacados',
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary,
+                          ProgramCarousel(programs: programs),
+
+                          const SizedBox(height: AppSpacing.section),
+
+                          _sectionHeader(
+                            title: 'Estaciones en vivo',
+                            subtitle: 'Selecciona una emisora para escucharla',
+                          ),
+
+                          if (audio.errorMessage != null) ...[
+                            const SizedBox(height: 14),
+
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(
+                                AppSpacing.medium + 2,
+                              ),
+
+                              decoration: BoxDecoration(
+                                color: AppColors.error.withValues(alpha: 0.10),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.medium,
+                                ),
+                              ),
+
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline_rounded,
+                                    color: AppColors.error,
+                                    size: 20,
                                   ),
+
+                                  const SizedBox(width: 10),
+
+                                  Expanded(
+                                    child: Text(
+                                      audio.errorMessage!,
+                                      style: AppTextStyles.stationDescription
+                                          .copyWith(
+                                            color: const Color(0xFFB93B47),
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
+
+                          const SizedBox(height: 22),
                         ],
                       ),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        station == null
-                            ? 'Explora los programas demo'
-                            : 'De ${station.name}',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14,
-                          color: AppColors.surface.withValues(alpha: 0.80),
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Carrusel
-                      ProgramCarousel(programs: programs),
-
-                      const SizedBox(height: 32),
-
-                      Divider(
-                        color: AppColors.surface.withValues(alpha: 0.12),
-                        thickness: 1,
-                      ),
-
-                      const SizedBox(height: 28),
-
-                      // ESTACIONES EN VIVO
-                      Row(
-                        children: [
-                          Container(
-                            width: 4,
-                            height: 26,
-                            decoration: BoxDecoration(
-                              color: AppColors.accent,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-
-                          const SizedBox(width: 12),
-
-                          Expanded(
-                            child: Text(
-                              'Estaciones en vivo',
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        'Selecciona una emisora para escucharla',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14,
-                          color: AppColors.surface.withValues(alpha: 0.80),
-                        ),
-                      ),
-
-                      // Mensaje de error
-                      if (audio.errorMessage != null) ...[
-                        const SizedBox(height: 8),
-
-                        Text(
-                          audio.errorMessage!,
-                          style: const TextStyle(color: AppColors.error),
-                        ),
-                      ],
-
-                      const SizedBox(height: 20),
-                    ],
+                    ),
                   ),
                 ),
               ),
 
-              // LISTA DE ESTACIONES
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                padding: const EdgeInsets.only(bottom: AppSpacing.large),
 
                 sliver: SliverList.builder(
                   itemCount: DemoData.stations.length,
@@ -214,12 +171,20 @@ class HomeScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = DemoData.stations[index];
 
-                    return StationCard(
-                      station: item,
-                      isActive: item.id == station?.id,
+                    return Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 560),
 
-                      // selección de estacion
-                      onTap: () => unawaited(audio.selectStation(item)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+
+                          child: StationCard(
+                            station: item,
+                            isActive: item.id == station?.id,
+                            onTap: () => unawaited(audio.selectStation(item)),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -229,7 +194,6 @@ class HomeScreen extends StatelessWidget {
         },
       ),
 
-      // MINIPLAYER
       bottomNavigationBar: Consumer<AudioProvider>(
         builder: (context, audio, _) {
           final station = audio.station;
@@ -241,32 +205,38 @@ class HomeScreen extends StatelessWidget {
           return SafeArea(
             top: false,
 
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Center(
+              heightFactor: 1,
 
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
 
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.surface.withValues(alpha: 0.20),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.normal,
+                    AppSpacing.small,
+                    AppSpacing.normal,
+                    AppSpacing.medium,
+                  ),
+
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppRadius.card),
+                      boxShadow: AppShadows.miniPlayer,
                     ),
-                  ],
-                ),
 
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppRadius.card),
 
-                  child: MiniPlayer(
-                    station: station,
-                    phase: audio.phase,
-                    onPlayPause: () => unawaited(audio.togglePlayback()),
+                      child: MiniPlayer(
+                        station: station,
+                        phase: audio.phase,
 
-                    // Abre el reproductor como Bottom Sheet.
-                    onTap: () => _openPlayer(context),
+                        onPlayPause: () => unawaited(audio.togglePlayback()),
+
+                        onTap: () => _openPlayer(context),
+                      ),
+                    ),
                   ),
                 ),
               ),

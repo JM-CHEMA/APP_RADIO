@@ -11,99 +11,152 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
-
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 350,
-                    padding: const EdgeInsets.all(20),
-                    child: Image.asset(
-                      'assets/icons/iconRadio.png',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final imageHeight = (constraints.maxHeight * 0.42).clamp(
+              210.0,
+              310.0,
+            );
 
-                  const SizedBox(height: 36),
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.large,
+                AppSpacing.normal,
+                AppSpacing.large,
+                AppSpacing.large,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, available) {
+                            return SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: available.maxHeight,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/icons/iconRadio.png',
+                                      width: double.infinity,
+                                      height: imageHeight,
+                                      fit: BoxFit.contain,
+                                    ),
 
-                  Text(
-                    'Bienvenido a Radio App',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                      height: 1.2,
-                    ),
-                  ),
+                                    const SizedBox(height: AppSpacing.large),
 
-                  const SizedBox(height: 18),
+                                    Container(
+                                      width: 42,
+                                      height: 4,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.accent,
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.small,
+                                        ),
+                                      ),
+                                    ),
 
-                  Text(
-                    'Descubre cuatro estaciones de radio internacional y disfruta de sus programas.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: 16,
-                      height: 1.5,
-                      color: AppColors.textPrimary.withValues(alpha: 0.65),
-                    ),
-                  ),
+                                    const SizedBox(height: AppSpacing.large),
 
-                  const SizedBox(height: 44),
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Bienvenido a\n',
+                                            style: AppTextStyles.sectionTitle
+                                                .copyWith(
+                                                  fontSize: 29,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                          ),
+                                          TextSpan(
+                                            text: 'Radio App',
+                                            style: AppTextStyles.sectionTitle
+                                                .copyWith(
+                                                  fontSize: 34,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: AppColors.accent,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
 
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.accent.withValues(alpha: 0.28),
-                          blurRadius: 18,
-                          offset: const Offset(0, 8),
+                                    const SizedBox(height: AppSpacing.normal),
+
+                                    Text(
+                                      'Descubre cuatro estaciones de radio internacional y disfruta de sus programas.',
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyles.sectionSubtitle
+                                          .copyWith(fontSize: 15, height: 1.6),
+                                    ),
+
+                                    const SizedBox(height: AppSpacing.large),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      ],
-                    ),
-                    child: SizedBox(
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          context.read<AppProvider>().markOnboardingCompleted();
+                      ),
 
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute<void>(
-                              builder: (context) => const HomeScreen(),
+                      const SizedBox(height: AppSpacing.medium),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 58,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            context
+                                .read<AppProvider>()
+                                .markOnboardingCompleted();
+
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute<void>(
+                                builder: (context) => const HomeScreen(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accent,
+                            foregroundColor: AppColors.backgroundPrimary,
+                            elevation: 6,
+                            shadowColor: AppColors.accent.withValues(
+                              alpha: 0.28,
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: AppColors.backgroundPrimary,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.card,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: const Text(
-                          'Comenzar',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Comenzar', style: AppTextStyles.button),
+
+                              const SizedBox(width: 12),
+
+                              const Icon(Icons.arrow_forward_rounded, size: 21),
+                            ],
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
