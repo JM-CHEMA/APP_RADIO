@@ -60,3 +60,4 @@ windows/flutter/ephemeral/
 *.hprof
 *.prof
 *.trace
+.widget_preview/
